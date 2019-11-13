@@ -1,5 +1,5 @@
 # Helpdesk-game
-Interactive Helpdesk simulator with provides a dialogue tree with three conflicting social roles
+Interactive Helpdesk simulator provides a dialogue tree with three conflicting social roles
 
 The game doesn't need to be installed, it's enough to copy the python script into a working directory and execute it with “python3 helpdeskgame.py”. The user has two buttons on the screen. With the next button he moves the pointer in the dialogue tree one position forward, while the reset button brings the simulation into the init state.
 
