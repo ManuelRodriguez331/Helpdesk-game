@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
 Helpdesk simulator
-version 0.1
+version 0.2
   
 """
-import tkinter, math, random
+import tkinter, random
 from tkinter.scrolledtext import ScrolledText
 
 class Physics:
   def __init__(self):
     self.speech=[] # (id,agentspeaks,direction,string,nextid)
-    self.speech.append((0,True,"customer->agent","Init",[1,29]))
+    self.speech.append((0,True,"customer->agent","Init",[1,29,48]))
     self.speech.append((1,True,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]))
     self.speech.append((2,True,'agent->customer',"Please hold.",[3]))
     self.speech.append((3,True,'agent->supervisor',"The monitor of a client is broken.",[4]))
@@ -44,7 +44,7 @@ class Physics:
     self.speech.append((27,True,'agent->supervisor',"you're right, sorry for asking you.",[28])) 
     self.speech.append((28,True,'agent->customer',"I have created a new ticket.",[-1]))                  
                               
-    self.speech.append((29,True,"customer->agent","I can't login into my account",[30]))
+    self.speech.append((29,True,"customer->agent","I can't login into my account",[30,37,43]))
     self.speech.append((30,True,"agent->customer","Please hold.",[31]))
     self.speech.append((31,True,"agent->supervisor","Are you familiar with login problems?",[32]))
     self.speech.append((32,True,"supervisor->agent","Sorry, but I'm in an important meeting.",[33]))
@@ -60,6 +60,22 @@ class Physics:
     self.speech.append((41,True,"supervisor->agent","Nope, and don't call me again.",[42]))
     self.speech.append((42,True,"agent->customer","Sorry, I don't know how to fix it, bye.",[-1]))
     
+    self.speech.append((43,True,"agent->customer","Do you know the password?",[44]))
+    self.speech.append((44,True,"customer->agent","Yes, I do.",[45]))
+    self.speech.append((45,True,"agent->customer","Are you using a desktop PC or a smartphone?",[46]))
+    self.speech.append((46,True,"customer->agent","I'm trying to login with a desktop PC.",[47]))
+    self.speech.append((47,True,"agent->customer","Please install the latest update of the operating system.",[-1]))
+    
+    self.speech.append((48,True,"customer->agent","In my Python script there is an error.",[49]))
+    self.speech.append((49,True,"agent->customer","Please hold.",[50]))
+    self.speech.append((50,True,"agent->supervisor","Can you open a ticket about a Python script problem?",[51]))
+    self.speech.append((51,True,"supervisor->agent","First, ask the customer for the details.",[52]))
+    self.speech.append((52,True,"agent->supervisor","It's a general Python problem, please create a new ticket first.",[53]))
+    self.speech.append((53,True,"supervisor->agent","It sounds, that the topic is important, isn't it?",[54]))
+    self.speech.append((54,True,"agent->customer","Sorry, but i don't know how to fix the error in the Python script.",[55]))
+    self.speech.append((55,True,"customer->agent","What does that mean?",[56]))
+    self.speech.append((56,True,"agent->customer","I will end the conversation, bye.",[-1]))
+    
     self.pos=0
   def getmessage(self):
     if self.pos==-1: 
@@ -69,6 +85,12 @@ class Physics:
       nodelist=self.speech[self.pos][4]
       self.pos=random.choice(nodelist)
     return message
+  def getchoice(self):  
+    result=[]
+    for i in self.speech[self.pos][4]:
+      message=self.speech[i][2]+": "+self.speech[i][3]
+      result.append((message,i))
+    return result
 
 
 class GUI:
@@ -77,7 +99,7 @@ class GUI:
     self.myphysics = Physics()
     # tkinter
     self.tkwindow = tkinter.Tk()
-    self.tkwindow.title("Helpdesk game v0.1")
+    self.tkwindow.title("Helpdesk game v0.2")
     self.tkwindow.geometry("500x300+600+0") # place to right
     self.tkwindow.bind("<Key>", self.inputhandling)
     # tkinter form
@@ -88,7 +110,7 @@ class GUI:
     self.buttonnext = tkinter.Button(self.tkwindow,text="next",command=self.action)
     self.buttonnext.place(x=10, y=250)
     self.buttonreset = tkinter.Button(self.tkwindow,text="reset",command=self.reset)
-    self.buttonreset.place(x=100, y=250) 
+    self.buttonreset.place(x=80, y=250) 
     self.radiobutton = tkinter.IntVar()     
     # loop 
     self.reset()
@@ -107,9 +129,11 @@ class GUI:
     self.myphysics.pos=0
     self.action()
   def action(self):
+    # message
     temp=self.myphysics.getmessage()
     self.widgetmessage.insert(tkinter.END,temp)
     self.widgetmessage.see(tkinter.END) # scroll to end
+    
       
 class Game():
   def __init__(self):
