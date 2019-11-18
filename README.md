@@ -8,3 +8,8 @@ The dialogue tree describes the relationship between three different social role
 Right now, the dialogue tree consists only of two customer problems: A broken monitor and a problem during login into a user account. It's only a minimal software because the user has no radio buttons to select the next action by himself. Also the datastructure which holds the dialogue is a very easy one.
 
 ![screenshot](screenshot.png)
+
+Changelog version 0.24
+
+- the amount of dialogue speech has increased to 74
+- cost function which is different for agent and supervisor speech
