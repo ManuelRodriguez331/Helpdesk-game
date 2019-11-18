@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Helpdesk simulator
-version 0.2
-  
+version 0.24
 """
 import tkinter, random
 from tkinter.scrolledtext import ScrolledText
@@ -10,11 +9,12 @@ from tkinter.scrolledtext import ScrolledText
 class Physics:
   def __init__(self):
     self.speech=[] # (id,agentspeaks,direction,string,nextid)
-    self.speech.append((0,True,"customer->agent","Init",[1,29,48]))
+  
+    self.speech.append((0,True,"customer->agent","Init",[1,29,48,66 ]))
     self.speech.append((1,True,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]))
     self.speech.append((2,True,'agent->customer',"Please hold.",[3]))
-    self.speech.append((3,True,'agent->supervisor',"The monitor of a client is broken.",[4]))
-    self.speech.append((4,True,"supervisor->agent","Should i open a new ticket?",[5]))
+    self.speech.append((3,True,'agent->supervisor',"The monitor of a client is broken.",[4,62]))
+    self.speech.append((4,True,"supervisor->agent","Should i open a new ticket?",[5,57]))
     self.speech.append((5,True,'agent->supervisor',"No, because the customer has argued, that he can fix it by himself.",[20]))
     self.speech.append((6,True,'agent->customer',"Can you be more specific?",[14]))
     
@@ -76,10 +76,33 @@ class Physics:
     self.speech.append((55,True,"customer->agent","What does that mean?",[56]))
     self.speech.append((56,True,"agent->customer","I will end the conversation, bye.",[-1]))
     
+    self.speech.append((57,True,"agent->supervisor","Yes, title: monitor isn't working.",[58]))
+    self.speech.append((58,True,"supervisor->agent","It's up to me to find an answer, right?",[59]))
+    self.speech.append((59,True,"agent->supervisor","Do you believe it's the cable?",[60]))
+    self.speech.append((60,True,"supervisor->agent","No it's the graphics card.",[61]))
+    self.speech.append((61,True,"agent->customer","It's the graphics card. Bye",[-1]))
+
+    self.speech.append((62,True,"supervisor->agent","It's his own fault, because his graphics card is configured wrong.",[63]))
+    self.speech.append((63,True,"agent->supervisor","But it can be a hardware problem as well.",[64]))
+    self.speech.append((64,True,"supervisor->agent","No it's not. The customer has no idea in which position the jumper is.",[65]))
+    self.speech.append((65,True,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]))
+
+    self.speech.append((66,True,"customer->agent","The server is offline, help.",[67]))
+    self.speech.append((67,True,"agent->customer","Please hold.",[68]))
+    self.speech.append((68,True,"agent->supervisor","Hi, what is going on?",[69]))
+    self.speech.append((69,True,"supervisor->agent","Nothing special, I'm trying to search something.",[70]))
+    self.speech.append((70,True,"agent->supervisor","The server of a customer is down.",[71]))
+    self.speech.append((71,True,"supervisor->agent","Ops, it was my fault. The new Apache config file has produced an error message.",[72]))
+    self.speech.append((72,True,"agent->supervisor","How long does it take to fix it?",[73]))
+    self.speech.append((73,True,"supervisor->agent","One hour, maybe longer.",[74]))
+    self.speech.append((74,True,"agent->customer","The server will be online soon. Bye.",[-1]))
+    
     self.pos=0
+    self.cost=0
   def getmessage(self):
+    self.cost+=self.getcost(self.pos)
     if self.pos==-1: 
-      message="END\n"
+      message="END, total cost="+str(self.cost)+"ct \n"
     else:
       message=self.speech[self.pos][2]+": "+self.speech[self.pos][3]+"\n"
       nodelist=self.speech[self.pos][4]
@@ -91,7 +114,11 @@ class Physics:
       message=self.speech[i][2]+": "+self.speech[i][3]
       result.append((message,i))
     return result
-
+  def getcost(self,speechid):
+    # 5ct for agent speech, 15ct for supervisor speech
+    if "supervisor" in self.speech[speechid][2]: result=15
+    else: result=5
+    return result
 
 class GUI:
   def __init__(self):
@@ -99,7 +126,7 @@ class GUI:
     self.myphysics = Physics()
     # tkinter
     self.tkwindow = tkinter.Tk()
-    self.tkwindow.title("Helpdesk game v0.2")
+    self.tkwindow.title("Helpdesk game v0.24")
     self.tkwindow.geometry("500x300+600+0") # place to right
     self.tkwindow.bind("<Key>", self.inputhandling)
     # tkinter form
@@ -121,12 +148,14 @@ class GUI:
   def painttkinter(self):
     # info
     result="fps "+str(self.fps)
+    result+=" cost "+str(self.myphysics.cost)
     self.widgetinfo.config(text=result)  
   def inputhandling(self,event):
     if event.keysym=="Right": pass
   def reset(self):
     self.widgetmessage.delete('1.0', tkinter.END)
     self.myphysics.pos=0
+    self.myphysics.cost=0
     self.action()
   def action(self):
     # message
