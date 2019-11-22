@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Helpdesk simulator
-version 0.24
+version 0.3
+   
 """
 import tkinter, random
 from tkinter.scrolledtext import ScrolledText
@@ -9,8 +10,8 @@ from tkinter.scrolledtext import ScrolledText
 class Physics:
   def __init__(self):
     self.speech=[] # (id,agentspeaks,direction,string,nextid)
-  
-    self.speech.append((0,True,"customer->agent","Init",[1,29,48,66 ]))
+                   # nextid=-1 -> speech ends
+    self.speech.append((0,True,"customer->agent","Init",[1,29,48,66]))
     self.speech.append((1,True,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]))
     self.speech.append((2,True,'agent->customer',"Please hold.",[3]))
     self.speech.append((3,True,'agent->supervisor',"The monitor of a client is broken.",[4,62]))
@@ -87,15 +88,35 @@ class Physics:
     self.speech.append((64,True,"supervisor->agent","No it's not. The customer has no idea in which position the jumper is.",[65]))
     self.speech.append((65,True,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]))
 
-    self.speech.append((66,True,"customer->agent","The server is offline, help.",[67]))
-    self.speech.append((67,True,"agent->customer","Please hold.",[68]))
+    self.speech.append((66,True,"customer->agent","The server is offline, help.",[67,83]))
+    self.speech.append((67,True,"agent->customer","Please hold.",[68,75]))
     self.speech.append((68,True,"agent->supervisor","Hi, what is going on?",[69]))
-    self.speech.append((69,True,"supervisor->agent","Nothing special, I'm trying to search something.",[70]))
+    self.speech.append((69,True,"supervisor->agent","Nothing special, I'm trying to search for something.",[70]))
     self.speech.append((70,True,"agent->supervisor","The server of a customer is down.",[71]))
     self.speech.append((71,True,"supervisor->agent","Ops, it was my fault. The new Apache config file has produced an error message.",[72]))
     self.speech.append((72,True,"agent->supervisor","How long does it take to fix it?",[73]))
     self.speech.append((73,True,"supervisor->agent","One hour, maybe longer.",[74]))
     self.speech.append((74,True,"agent->customer","The server will be online soon. Bye.",[-1]))
+    
+    self.speech.append((75,True,"agent->supervisor","Can you open a new ticket, please?",[76]))
+    self.speech.append((76,True,"supervisor->agent","What is the problem?",[77]))
+    self.speech.append((77,True,"agent->supervisor","The server of a customer is offline.",[78]))
+    self.speech.append((78,True,"supervisor->agent","He should reboot it with the console.",[79]))
+    self.speech.append((79,True,"agent->supervisor","First, you want to explain that's the fault of the customer? Secondly, please give me the ticket number.",[80]))
+    self.speech.append((80,True,"supervisor->agent","The id is 123, and i will take a look at the problem.",[81]))
+    self.speech.append((81,True,"agent->supervisor","Thank you",[82]))
+    self.speech.append((82,True,"agent->customer","The ticket id is 123, an expert is fixing the problem right now.",[-1]))
+    
+    self.speech.append((83,True,"agent->customer","Which one?",[84]))
+    self.speech.append((84,True,"customer->agent","There is only one server, the ID is 123.",[85]))
+    self.speech.append((85,True,"agent->customer","What have you done so far to fix the problem?",[86]))
+    self.speech.append((86,True,"customer->agent","I have tried to turn it on and off, and i have installed all the software updates.",[87]))
+    self.speech.append((87,True,"agent->customer","Are you familiar with the config file of the Apache webserver?",[88]))
+    self.speech.append((88,True,"customer->agent","No, I'm not. Do you think that the problem is located there?",[89]))
+    self.speech.append((89,True,"agent->customer","This has to be investigated next. Please open the file and tell me which php modules are loaded.",[90]))
+    self.speech.append((90,True,"customer->agent","I don't know, where the init file is located, can i call you back?",[91]))
+    self.speech.append((91,True,"agent->customer","It's stored at /etc/httpd. Please check the loaded php modules and call me back if you are finished.",[92]))
+    self.speech.append((92,True,"customer->agent","Sounds great, Thank you for your help, bye.",[-1]))
     
     self.pos=0
     self.cost=0
@@ -108,6 +129,7 @@ class Physics:
       nodelist=self.speech[self.pos][4]
       self.pos=random.choice(nodelist)
     return message
+    
   def getchoice(self):  
     result=[]
     for i in self.speech[self.pos][4]:
@@ -126,19 +148,20 @@ class GUI:
     self.myphysics = Physics()
     # tkinter
     self.tkwindow = tkinter.Tk()
-    self.tkwindow.title("Helpdesk game v0.24")
+    self.tkwindow.title("Helpdesk game")
     self.tkwindow.geometry("500x300+600+0") # place to right
     self.tkwindow.bind("<Key>", self.inputhandling)
     # tkinter form
     self.widgetinfo = tkinter.Label(self.tkwindow, text="info",justify="left", wraplength=250)
     self.widgetinfo.place(x=10, y=0)    
-    self.widgetmessage = ScrolledText(self.tkwindow, width=60, height=8, wrap="word")    
+    self.widgetmessage = ScrolledText(self.tkwindow, width=65, height=9, wrap="word")    
     self.widgetmessage.place(x=10, y=20)
     self.buttonnext = tkinter.Button(self.tkwindow,text="next",command=self.action)
     self.buttonnext.place(x=10, y=250)
     self.buttonreset = tkinter.Button(self.tkwindow,text="reset",command=self.reset)
     self.buttonreset.place(x=80, y=250) 
-    self.radiobutton = tkinter.IntVar()     
+    self.radiobutton = tkinter.IntVar() 
+           
     # loop 
     self.reset()
     self.gameloop()
@@ -159,10 +182,10 @@ class GUI:
     self.action()
   def action(self):
     # message
-    temp=self.myphysics.getmessage()
-    self.widgetmessage.insert(tkinter.END,temp)
+    msg=self.myphysics.getmessage()
+    self.widgetmessage.insert(tkinter.END,msg)
     self.widgetmessage.see(tkinter.END) # scroll to end
-    
+
       
 class Game():
   def __init__(self):
