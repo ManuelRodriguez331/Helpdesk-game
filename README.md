@@ -9,7 +9,13 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 
 ![screenshot](screenshot.png)
 
-Changelog version 0.24
+### Changelog
+version 0.24
 
 - the amount of dialogue speech has increased to 74
 - cost function which is different for agent and supervisor speech
+
+version 0.3
+
+- increased amount of dialogue speech, now there are 92 entries in the database
+- small layout fix
