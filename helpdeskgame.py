@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Helpdesk simulator
-version 0.4
+version 0.44
 
 """
 import tkinter, random, time
@@ -9,8 +9,8 @@ from tkinter.scrolledtext import ScrolledText
 
 class Physics:
   def __init__(self):
-    # (id,agentspeaks,direction,string,nextid)
-    # nextid=-1 -> speech ends
+    # (id,direction,textstring,nextid)
+    # last node nextid: (-1) -> speech ends
     self.speech=[ 
       (0,"customer->agent","Init",[1,29,48,66]),
       (1,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]),
@@ -45,9 +45,9 @@ class Physics:
       (26,'supervisor->agent',"Nope, because that's your job.",[27]), 
       (27,'agent->supervisor',"you're right, sorry for asking you.",[28]), 
       (28,'agent->customer',"I have created a new ticket.",[-1]),                  
-                                
+                               
       (29,"customer->agent","I can't login into my account",[30,37,43]),
-      (30,"agent->customer","Please hold.",[31]),
+      (30,"agent->customer","Please hold.",[31,111]),
       (31,"agent->supervisor","Are you familiar with login problems?",[32]),
       (32,"supervisor->agent","Sorry, but I'm in an important meeting.",[33]),
       (33,"agent->supervisor","You mean, you can't create a simple ticket for the issue?",[34]),
@@ -89,7 +89,7 @@ class Physics:
       (64,"supervisor->agent","No it's not. The customer has no idea in which position the jumper is.",[65]),
       (65,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]),
 
-      (66,"customer->agent","The server is offline, help.",[67,83]),
+      (66,"customer->agent","The server is offline, help.",[67,83,123]),
       (67,"agent->customer","Please hold.",[68,75,93]),
       (68,"agent->supervisor","Hi, what is going on?",[69]),
       (69,"supervisor->agent","Nothing special, I'm trying to search for something.",[70]),
@@ -116,7 +116,7 @@ class Physics:
       (88,"customer->agent","No, I'm not. Do you think that the problem is located there?",[89]),
       (89,"agent->customer","This has to be investigated next. Please open the file and tell me which php modules are loaded.",[90]),
       (90,"customer->agent","I don't know, where the init file is located, can i call you back?",[91]),
-      (91,"agent->customer","It's stored at /etc/httpd. Please check the loaded php modules and call me back if you are finished.",[92]),
+      (91,"agent->customer","It's stored at /etc/httpd. Please check the loaded php modules and call me back if you're finished.",[92]),
       (92,"customer->agent","Sounds great, Thank you for your help, bye.",[-1]),
       
       (93,"agent->supervisor","The server of a customer is down.",[94]),
@@ -138,6 +138,33 @@ class Physics:
       (108,"supervisor->agent","Go ahead",[109]),
       (109,'agent->customer',"Thanks for waiting, a technican will visit you and will install a new monitor. Bye.",[110]),
       (110,'customer->agent',"Thank you very much.",[-1]),
+
+      (111,"agent->supervisor","I have a new problem, are you interested?",[112,116]),
+      (112,"supervisor->agent","No, I'm bussy.",[113]),
+      (113,"agent->customer","Sorry, but my pull request failed, bye.",[114]),
+      (114,"customer->agent","One moment please, what is a pull request?",[115]),
+      (115,"agent->customer","It's an internal helpdesk term. Your account login problem remains unsolved. Bye",[-1]),
+
+      (116,"supervisor->agent","Sure, what it is?",[117]),
+      (117,"agent->supervisor","The customer can't login into his account.",[118]),
+      (118,"supervisor->agent","I have created a new ticket and assigned it to your name.",[119]),
+      (119,"agent->supervisor","And now i need something which i can offer to the customer.",[120]),
+      (120,"supervisor->agent","It's the first time that such a problem is there.",[121]),
+      (121,"agent->supervisor","No problem, leave the ticket open. I will explain it to the customer.",[122]),
+      (122,"agent->customer","A ticket was created for the login problem. But we don't know how to fix it. Bye.",[-1]),
+
+      (123,"agent->customer","And you need an expert, right?",[124]),
+      (124,"customer->agent","No I'm not, i call the hotline because of no reason.",[125]),
+      (125,"agent->customer","One moment please.",[126]),
+      (126,"agent->supervisor","I have work for you, a server is offline, are you interested?",[127]),
+      (127,"supervisor->agent","It's not the best moment.",[128]),
+      (128,"agent->supervisor","Sorry, for asking you.",[129]),
+      (129,"agent->customer","The server problem has to wait. Have a nice day.",[-1]),
+
+    ]
+    self.customerfocus=[ 
+    # (lastnodeid, value from 0..1), 0.5 is normal
+      (47,.1),
     ]
     self.pos=0
     self.cost=0
@@ -149,8 +176,8 @@ class Physics:
     else:
       self.poslog.append(self.pos)
       message=self.speech[self.pos][1]+": "+self.speech[self.pos][2]+"\n"
-      nodelist=self.speech[self.pos][3]
-      self.pos=random.choice(nodelist)
+      temp=self.speech[self.pos][3]
+      self.pos=random.choice(temp)
     return message
   def getcost(self,speechid):
     # 5ct for agent speech, 15ct for supervisor speech
@@ -162,11 +189,20 @@ class Physics:
     self.pos=0
     self.cost=0
     self.poslog=[]
+  def planpath(self):
+  # function is not used
+    for i in range(15):
+      temp=self.getmessage()
+      print(i,temp)
+      if "cost=" in temp: # check for END
+        print(self.poslog)
+        break 
+        
 
 
 class GUI:
   def __init__(self):
-    self.fps=10 # 20
+    self.fps=10
     self.myphysics = Physics()
     # tkinter
     self.tkwindow = tkinter.Tk()
@@ -184,14 +220,16 @@ class GUI:
     self.buttonreset.place(x=80, y=220) 
     # loop 
     self.reset()
-    self.gameloop()
+    #self.gameloop()
   def gameloop(self):
     self.painttkinter()
     self.tkwindow.after(int(1000/self.fps), self.gameloop) # call gameloop every tick             
   def painttkinter(self):
     # info
-    result="fps "+str(self.fps)
-    result+=" cost "+str(self.myphysics.cost)
+    
+    result="nodes in database "+str(len(self.myphysics.speech))
+    #result+="\nfps "+str(self.fps)
+    result+="\ncost "+str(self.myphysics.cost)
     result+="\nhistory "+str(self.myphysics.poslog)
     self.widgetinfo.config(text=result)  
   def inputhandling(self,event):
@@ -205,6 +243,7 @@ class GUI:
     msg=self.myphysics.getmessage()
     self.widgetmessage.insert(tkinter.END,msg)
     self.widgetmessage.see(tkinter.END) # scroll to end
+    self.painttkinter()
 
       
 class Game():
@@ -213,4 +252,3 @@ class Game():
     self.mygui.tkwindow.mainloop()
 
 mygame=Game()
-
