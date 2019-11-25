@@ -10,10 +10,14 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ![screenshot](screenshot.png)
 
 ### Changelog
+version 0.44
+
+- database has 130 nodes
+  
 version 0.4
 
- - initializing of string list was simplified
- - increased amount of dialogue speech to 110
+- initializing of string list was simplified
+- increased amount of dialogue speech to 110
  
  version 0.3
 
