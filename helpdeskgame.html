@@ -1,0 +1,248 @@
+<!doctype html>
+<html> 
+<head>
+	<meta charset="utf-8">
+  <title>Helpdesk game</title>
+<script type="text/javascript">
+// Helpdesk game, version 0.5
+
+
+// global variables  
+var pos=0
+var cost=0
+var poslog=[]
+
+var Speech = function(id,direction,text,nextid) {
+  this.id = id;
+  this.direction = direction;
+  this.text = text;
+  this.nextid = nextid;
+};
+var speech = [
+  new Speech(0,"customer->agent","Init",[1,29,48,66,130]),
+  new Speech(1,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]),
+  new Speech(2,'agent->customer',"Please hold.",[3,102]),
+  new Speech(3,'agent->supervisor',"The monitor of a client is broken.",[4,62]),
+  new Speech(4,"supervisor->agent","Should i open a new ticket?",[5,57]),
+  new Speech(5,'agent->supervisor',"No, because the customer has argued, that he can fix it by himself.",[20]),
+  new Speech(6,'agent->customer',"Can you be more specific?",[14]),
+  
+  new Speech(7,'agent->customer',"It's your fault.",[8]),
+  new Speech(8,'customer->agent',"Can i talk to your supervisor please.",[9,11]),
+  new Speech(9,'agent->customer',"No, he isn't available.",[10]),  
+  new Speech(10,'customer->agent',"It's a bad service, bye.",[-1]),  
+  new Speech(11,'agent->customer',"Sure, one moment please.",[-1]),    
+  new Speech(12,'agent->supervisor',"Do you like to talk to a customer?",[12]),
+  new Speech(13,'supervisor->agent',"Nope.",[-1]),
+  
+  new Speech(14,'customer->agent',"The display is black and i can see nothing.",[15]),
+  new Speech(15,'agent->customer',"Plug in the monitor cable, does it work now?",[16,18]),
+  new Speech(16,'customer->agent',"Thanks, it was my fault.",[17]),      
+  new Speech(17,'agent->customer',"Have a nice day",[-1]),                  
+  new Speech(18,'customer->agent',"No, it's not working",[19]),
+  new Speech(19,'agent->customer',"Please hold",[-1]),       
+         
+  new Speech(20,'supervisor->agent',"Perhaps the cable is broken?",[21,23]),  
+  new Speech(21,'agent->supervisor',"Thank you",[22]),  
+  new Speech(22,'agent->customer',"The cable is broken. Bye",[-1]), 
+  new Speech(23,'agent->supervisor',"Why do you think so?",[24]),  
+  new Speech(24,'supervisor->agent',"Because this is the standard answer given in the manual",[-1]),  
+              
+  new Speech(25,'agent->supervisor',"Can you create a new ticket, please?",[26]),   
+  new Speech(26,'supervisor->agent',"Nope, because that's your job.",[27]), 
+  new Speech(27,'agent->supervisor',"you're right, sorry for asking you.",[28]), 
+  new Speech(28,'agent->customer',"I have created a new ticket.",[-1]),                  
+                           
+  new Speech(29,"customer->agent","I can't login into my account",[30,37,43]),
+  new Speech(30,"agent->customer","Please hold.",[31,111]),
+  new Speech(31,"agent->supervisor","Are you familiar with login problems?",[32]),
+  new Speech(32,"supervisor->agent","Sorry, but I'm in an important meeting.",[33]),
+  new Speech(33,"agent->supervisor","You mean, you can't create a simple ticket for the issue?",[34]),
+  new Speech(34,"supervisor->agent","Ok, what should i write down?",[35]),
+  new Speech(35,"agent->supervisor","The user isn't able to login into his account and it's urgent.",[36]),
+  new Speech(36,"agent->customer","A new ticket was created. Bye",[-1]),
+  
+  new Speech(37,"agent->supervisor","Can you create a new ticket for a login problem, please?",[38,41]),
+  new Speech(38,"supervisor->agent","Done. Anything else, what i can do for you?",[39]),
+  new Speech(39,"agent->supervisor","Sure, I'd like to get a cup of tea.",[40]),
+  new Speech(40,"agent->customer","I have created a ticket for you, bye.",[-1]),
+  new Speech(41,"supervisor->agent","Nope, and don't call me again.",[42]),
+  new Speech(42,"agent->customer","Sorry, I don't know how to fix it, bye.",[-1]),
+  
+  new Speech(43,"agent->customer","Do you know the password?",[44]),
+  new Speech(44,"customer->agent","Yes, I do.",[45]),
+  new Speech(45,"agent->customer","Are you using a desktop PC or a smartphone?",[46]),
+  new Speech(46,"customer->agent","I'm trying to login with a desktop PC.",[47]),
+  new Speech(47,"agent->customer","Please install the latest update of the operating system.",[-1]),
+  
+  new Speech(48,"customer->agent","In my Python script there is an error.",[49]),
+  new Speech(49,"agent->customer","Please hold.",[50]),
+  new Speech(50,"agent->supervisor","Can you open a ticket about a Python script problem?",[51]),
+  new Speech(51,"supervisor->agent","First, ask the customer for the details.",[52]),
+  new Speech(52,"agent->supervisor","It's a general Python problem, please create a new ticket first.",[53]),
+  new Speech(53,"supervisor->agent","It sounds, that the topic is important, isn't it?",[54]),
+  new Speech(54,"agent->customer","Sorry, but i don't know how to fix the error in the Python script.",[55]),
+  new Speech(55,"customer->agent","What does that mean?",[56]),
+  new Speech(56,"agent->customer","I will end the conversation, bye.",[-1]),
+  
+  new Speech(57,"agent->supervisor","Yes, title: monitor isn't working.",[58]),
+  new Speech(58,"supervisor->agent","It's up to me to find an answer, right?",[59]),
+  new Speech(59,"agent->supervisor","Do you believe it's the cable?",[60]),
+  new Speech(60,"supervisor->agent","No it's the graphics card.",[61]),
+  new Speech(61,"agent->customer","It's the graphics card. Bye",[-1]),
+
+  new Speech(62,"supervisor->agent","It's his own fault, because his graphics card is configured wrong.",[63]),
+  new Speech(63,"agent->supervisor","But it can be a hardware problem as well.",[64]),
+  new Speech(64,"supervisor->agent","No it's not. The customer has no idea in which position the jumper is.",[65]),
+  new Speech(65,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]),
+
+  new Speech(66,"customer->agent","The server is offline, help.",[67,83,123]),
+  new Speech(67,"agent->customer","Please hold.",[68,75,93]),
+  new Speech(68,"agent->supervisor","Hi, what is going on?",[69]),
+  new Speech(69,"supervisor->agent","Nothing special, I'm trying to search for something.",[70]),
+  new Speech(70,"agent->supervisor","The server of a customer is down.",[71]),
+  new Speech(71,"supervisor->agent","Ops, it was my fault. The new Apache config file has produced an error message.",[72]),
+  new Speech(72,"agent->supervisor","How long does it take to fix it?",[73]),
+  new Speech(73,"supervisor->agent","One hour, maybe longer.",[74]),
+  new Speech(74,"agent->customer","The server will be online soon. Bye.",[-1]),
+  
+  new Speech(75,"agent->supervisor","Can you open a new ticket, please?",[76]),
+  new Speech(76,"supervisor->agent","What is the problem?",[77]),
+  new Speech(77,"agent->supervisor","The server of a customer is offline.",[78]),
+  new Speech(78,"supervisor->agent","He should reboot it with the console.",[79]),
+  new Speech(79,"agent->supervisor","First, you want to explain that's the fault of the customer? Secondly, please give me the ticket number.",[80]),
+  new Speech(80,"supervisor->agent","The id is 123, and i will take a look at the problem.",[81]),
+  new Speech(81,"agent->supervisor","Thank you",[82]),
+  new Speech(82,"agent->customer","The ticket id is 123, an expert is fixing the problem right now.",[-1]),
+  
+  new Speech(83,"agent->customer","Which one?",[84]),
+  new Speech(84,"customer->agent","There is only one server, the ID is 123.",[85]),
+  new Speech(85,"agent->customer","What have you done so far to fix the problem?",[86]),
+  new Speech(86,"customer->agent","I have tried to turn it on and off, and i have installed all the software updates.",[87]),
+  new Speech(87,"agent->customer","Are you familiar with the config file of the Apache webserver?",[88]),
+  new Speech(88,"customer->agent","No, I'm not. Do you think that the problem is located there?",[89]),
+  new Speech(89,"agent->customer","This has to be investigated next. Please open the file and tell me which php modules are loaded.",[90]),
+  new Speech(90,"customer->agent","I don't know, where the init file is located, can i call you back?",[91]),
+  new Speech(91,"agent->customer","It's stored at /etc/httpd. Please check the loaded php modules and call me back if you're finished.",[92]),
+  new Speech(92,"customer->agent","Sounds great, Thank you for your help, bye.",[-1]),
+  
+  new Speech(93,"agent->supervisor","The server of a customer is down.",[94]),
+  new Speech(94,"supervisor->agent","Please fix it according to the manual.",[95]),
+  new Speech(95,"agent->supervisor","First, I'd like to ask for your opinion.",[96]),
+  new Speech(96,"supervisor->agent","I trust you, you are an experienced agent and can bring the server online without my help.",[97]),
+  new Speech(97,"agent->supervisor","Thanks for the help.",[98]),
+  new Speech(98,"agent->customer","Can you provide more information about the server problem?",[99]),
+  new Speech(99,"customer->agent","After rebooting the virtual machine, a message is shown, that the webserver can't be initalized.",[100]),
+  new Speech(100,"agent->customer","Sounds interesting, i will create a ticket, one moment please.",[101]),
+  new Speech(101,"agent->customer","Hi, I'm done with the ticket. Right now, i can't fix the issue. Bye.",[-1]),
+
+  new Speech(102,'agent->supervisor',"The customer has a broken monitor, i will create a ticket in the issue tracker.",[103]),
+  new Speech(103,"supervisor->agent","It's correct, go ahead",[104]),
+  new Speech(104,'agent->supervisor',"The issue can be fixed, by providing a new monitor.",[105]),
+  new Speech(105,"supervisor->agent","Hm",[106]),
+  new Speech(106,'agent->supervisor',"I have to open a second tab for activating the workflow.",[107]),
+  new Speech(107,'agent->supervisor',"And now i can enter the adress of the customer.",[108]),
+  new Speech(108,"supervisor->agent","Go ahead",[109]),
+  new Speech(109,'agent->customer',"Thanks for waiting, a technican will visit you and will install a new monitor. Bye.",[110]),
+  new Speech(110,'customer->agent',"Thank you very much.",[-1]),
+
+  new Speech(111,"agent->supervisor","I have a new problem, are you interested?",[112,116]),
+  new Speech(112,"supervisor->agent","No, I'm bussy.",[113]),
+  new Speech(113,"agent->customer","Sorry, but my pull request failed, bye.",[114]),
+  new Speech(114,"customer->agent","One moment please, what is a pull request?",[115]),
+  new Speech(115,"agent->customer","It's an internal helpdesk term. Your account login problem remains unsolved. Bye",[-1]),
+
+  new Speech(116,"supervisor->agent","Sure, what it is?",[117]),
+  new Speech(117,"agent->supervisor","The customer can't login into his account.",[118]),
+  new Speech(118,"supervisor->agent","I have created a new ticket and assigned it to your name.",[119]),
+  new Speech(119,"agent->supervisor","And now i need something which i can offer to the customer.",[120]),
+  new Speech(120,"supervisor->agent","It's the first time that such a problem is there.",[121]),
+  new Speech(121,"agent->supervisor","No problem, leave the ticket open. I will explain it to the customer.",[122]),
+  new Speech(122,"agent->customer","A ticket was created for the login problem. But we don't know how to fix it. Bye.",[-1]),
+
+  new Speech(123,"agent->customer","And you need an expert, right?",[124]),
+  new Speech(124,"customer->agent","No I'm not, i call the hotline because of no reason.",[125]),
+  new Speech(125,"agent->customer","One moment please.",[126]),
+  new Speech(126,"agent->supervisor","I have work for you, a server is offline, are you interested?",[127]),
+  new Speech(127,"supervisor->agent","It's not the best moment.",[128]),
+  new Speech(128,"agent->supervisor","Sorry, for asking you.",[129]),
+  new Speech(129,"agent->customer","The server problem has to wait. Have a nice day.",[-1]),
+
+  new Speech(130,"customer->agent","Hello again, i've called the helpdesk an hour ago, because my monitor isn't working.",[131]),
+  new Speech(131,"agent->customer","And the problem wasn't fixed?",[132]),
+  new Speech(132,"customer->agent","Right, and now I'd like to talk to your supervisor please.",[133]),
+  new Speech(133,"agent->customer","please hold",[134]),
+  new Speech(134,"agent->supervisor","Can you search in the database for a ticket with a monitor problem?",[135]),
+  new Speech(135,"supervisor->agent","There was no ticket created.",[136]),
+  new Speech(136,"agent->supervisor","Create a new ticket and i need a possible workaround from you.",[137]),
+  new Speech(137,"supervisor->agent","I'm only the supervisor, i have no ideas about broken monitors.",[138]),
+  new Speech(138,"agent->supervisor","Thanks",[139]),
+  new Speech(139,"agent->customer","Hi, there are bad news. I've created a ticket for the issue, but i have no idea how to solve it.",[140]),
+  new Speech(140,"customer->agent","No problem, I have to accept it. Bye.",[-1]),
+];
+
+function next() {
+  if (pos==-1) {
+    message="END"
+  }
+  else {
+    // create message
+    cost+=getcost()
+    var temp=speech[pos].nextid
+    var rand = temp[Math.floor(Math.random() * temp.length)]; // get random element
+    var message= speech[pos].direction+": "+speech[pos].text
+    poslog.push(pos)
+    pos=rand
+  }
+  document.getElementById('msgbox').value+= message+"\n"
+  
+  // scroll to end of textarea
+  var textarea = document.getElementById('msgbox');
+  textarea.scrollTop = textarea.scrollHeight;
+  
+  // update labelinfo
+  document.getElementById('labelnodes').innerHTML = "nodes in database "+speech.length
+  document.getElementById('labelcost').innerHTML = "cost "+cost
+  document.getElementById('labelhistory').innerHTML = "history "+poslog
+}
+
+function resetgame() {
+  pos=0
+  cost=0
+  poslog=[]
+  document.getElementById('msgbox').value = ""
+  next();
+}
+function getcost() {
+  // 5ct for agent speech, 15ct for supervisor speech  
+  var result=5
+  if (speech[pos].direction.includes("supervisor")==true) {
+    result=15
+  }
+  return result
+}
+
+</script>
+
+</head>
+
+<body>
+<h2>Helpdesk game</h2>
+
+<form name="form1">
+  <label id="labelnodes">info</label><br>
+  <label id="labelcost">info</label><br>
+  <label id="labelhistory">info</label><br>
+  <p>
+  <textarea id="msgbox" cols="70" rows="10"></textarea>
+  <p>
+  <input type="button" name="submit" value="next" onclick="next();" />
+  <input type="button" name="submit" value="reset" onclick="resetgame();" />
+</form>  
+
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+  next();
+</script>
