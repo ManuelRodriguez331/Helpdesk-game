@@ -10,6 +10,11 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ![screenshot](screenshot.png)
 
 ### Changelog
+version 1.0
+
+- 193 nodes in database
+- getfollownode() as Javascript function
+
 version 0.5
 
 - changed programming language from Python to Javascript
