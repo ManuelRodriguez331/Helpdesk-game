@@ -10,6 +10,10 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ![screenshot](screenshot.png)
 
 ### Changelog
+version 1.1
+
+- 219 nodes in the database
+
 version 1.0
 
 - 193 nodes in database
