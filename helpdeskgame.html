@@ -5,9 +5,9 @@
   <title>Helpdesk game</title>
 <script type="text/javascript">
 /*
-Helpdesk game, version 1.0
-*/
+Helpdesk game, version 1.1 
 
+*/
 // global variables  
 var pos=0
 var cost=0
@@ -22,7 +22,7 @@ var Speech = function(id,direction,text,nextid) {
 var speech = [
   new Speech(0,"customer->agent","Init",[1,29,48,66,130]),
   new Speech(1,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]),
-  new Speech(2,"agent->customer","Please hold.",[3,102]),
+  new Speech(2,"agent->customer","Please hold.",[3,102,193,202]),
   new Speech(3,"agent->supervisor","The monitor of a client is broken.",[4,62]),
   new Speech(4,"supervisor->agent","Should i open a new ticket?",[5,57]),
   new Speech(5,"agent->supervisor","No, because the customer has argued, that he can fix it by himself.",[20]),
@@ -75,9 +75,9 @@ var speech = [
   new Speech(45,"agent->customer","Are you using a desktop PC or a smartphone?",[46]),
   new Speech(46,"customer->agent","I'm trying to login with a desktop PC.",[47]),
   new Speech(47,"agent->customer","Please install the latest update of the operating system.",[-1]),
-  
+
   new Speech(48,"customer->agent","In my Python script there is an error.",[49,152,183]),
-  new Speech(49,"agent->customer","Please hold.",[50,173]),
+  new Speech(49,"agent->customer","Please hold.",[50,173,213]),
   new Speech(50,"agent->supervisor","Can you open a ticket about a Python script problem?",[51]),
   new Speech(51,"supervisor->agent","First, ask the customer for the details.",[52]),
   new Speech(52,"agent->supervisor","It's a general Python problem, please create a new ticket first.",[53]),
@@ -237,6 +237,35 @@ var speech = [
   new Speech(190,"customer->agent","After commenting out the line, the Python program runs great.",[191]),
   new Speech(191,"agent->customer","You mean, the problem was fixed?",[192]),
   new Speech(192,"customer->agent","Without your help, it wouldn't be possible. Thank you very much. Bye",[-1]),
+
+  new Speech(193,"agent->supervisor","What is the procedure to fix a monitor?",[194]),
+  new Speech(194,"supervisor->agent","Why are you asking?",[195]),
+  new Speech(195,"agent->supervisor","There is a customer on the other line, please open a new ticket about the issue.",[196]),
+  new Speech(196,"supervisor->agent","No, that is your job.",[197]),
+  new Speech(197,"agent->supervisor","The customer needs an answer soon, if you could create the ticket we are done much faster.",[198]),
+  new Speech(198,"supervisor->agent","Sorry, i have no time for the problem. Bye.",[199]),
+  new Speech(199,"agent->customer","There are bad news, the monitor problem can't be fixed.",[200]),
+  new Speech(200,"customer->agent","Why?",[201]),
+  new Speech(201,"agent->customer","I have no idea. Bye.",[-1]),
+
+  new Speech(202,"agent->supervisor","Hi, do you like to create a new ticket about a broken monitor?",[203]),
+  new Speech(203,"supervisor->agent","Sure, because that is my job.",[204]),
+  new Speech(204,"agent->supervisor","The information about the malfunction is low, according to the customer the monitor isn't working anymore.",[205]),
+  new Speech(205,"supervisor->agent","It can be driver problem or a hardware problem.",[206]),
+  new Speech(206,"agent->supervisor","Please write it down into the ticket and add the most common workarounds.",[207]),
+  new Speech(207,"supervisor->agent","Please hold.",[208]),
+  new Speech(208,"agent->customer","How is the weather at your location?",[209]),
+  new Speech(209,"customer->agent","Great, and yourself?",[210]),
+  new Speech(210,"agent->customer","It's sunny. Oh the ticket is ready. It can be either a wrong Windows driver, or a broken graphics card.",[211]),
+  new Speech(211,"customer->agent","Thanks for the help, Bye.",[212]),
+  new Speech(212,"agent->customer","Bye",[-1]),
+
+  new Speech(213,"agent->supervisor","Hi, an error was found in a Python script.",[214]),
+  new Speech(214,"supervisor->agent","And?",[215]),
+  new Speech(215,"agent->supervisor","What is the answer to the issue?",[216]),
+  new Speech(216,"supervisor->agent","It's your job to help the user.",[217]),
+  new Speech(217,"agent->supervisor","Oh i see.",[218]),
+  new Speech(218,"agent->customer","Sorry, i have no idea how to fix it. Bye",[-1]),
 
 ];
 
