@@ -5,7 +5,7 @@
   <title>Helpdesk game</title>
 <script type="text/javascript">
 /*
-Helpdesk game, version 1.1 
+Helpdesk game, version 1.15 
 
 */
 // global variables  
@@ -53,8 +53,8 @@ var speech = [
   new Speech(26,"supervisor->agent","Nope, because that's your job.",[27]), 
   new Speech(27,"agent->supervisor","you're right, sorry for asking you.",[28]), 
   new Speech(28,"agent->customer","I have created a new ticket.",[-1]),                  
-                           
-  new Speech(29,"customer->agent","I can't login into my account",[30,37,43]),
+
+  new Speech(29,"customer->agent","I can't login into my account",[30,37,43,219]),
   new Speech(30,"agent->customer","Please hold.",[31,111,162]),
   new Speech(31,"agent->supervisor","Are you familiar with login problems?",[32]),
   new Speech(32,"supervisor->agent","Sorry, but I'm in an important meeting.",[33]),
@@ -98,7 +98,7 @@ var speech = [
   new Speech(65,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]),
 
   new Speech(66,"customer->agent","The server is offline, help.",[67,83,123]),
-  new Speech(67,"agent->customer","Please hold.",[68,75,93]),
+  new Speech(67,"agent->customer","Please hold.",[68,75,93,234]),
   new Speech(68,"agent->supervisor","Hi, what is going on?",[69]),
   new Speech(69,"supervisor->agent","Nothing special, I'm trying to search for something.",[70]),
   new Speech(70,"agent->supervisor","The server of a customer is down.",[71]),
@@ -162,7 +162,7 @@ var speech = [
   new Speech(122,"agent->customer","A ticket was created for the login problem. But we don't know how to fix it. Bye.",[-1]),
 
   new Speech(123,"agent->customer","And you need an expert, right?",[124]),
-  new Speech(124,"customer->agent","No I'm not, i call the hotline because of no reason.",[125]),
+  new Speech(124,"customer->agent","No I don't, i'm calling the hotline because of no reason.",[125]),
   new Speech(125,"agent->customer","One moment please.",[126]),
   new Speech(126,"agent->supervisor","I have work for you, a server is offline, are you interested?",[127]),
   new Speech(127,"supervisor->agent","It's not the best moment.",[128]),
@@ -267,6 +267,32 @@ var speech = [
   new Speech(217,"agent->supervisor","Oh i see.",[218]),
   new Speech(218,"agent->customer","Sorry, i have no idea how to fix it. Bye",[-1]),
 
+  new Speech(219,"agent->customer","Sorry, i have no idea what to do.",[220]),
+  new Speech(220,"customer->agent","It's a very good answer. Can I talk to your supervisor please?",[221]),
+  new Speech(221,"agent->customer","This is a joke, isn't it?",[222]),
+  new Speech(222,"customer->agent","My problem is urgent, I'd like to speak to your supervisor.",[223]),
+  new Speech(223,"customer->agent","Please hold.",[224]),
+  new Speech(224,"agent->supervisor","There is a customer, who can't login into his account.",[225]),
+  new Speech(225,"supervisor->agent","And you need to know how to fix it?",[226]),
+  new Speech(226,"agent->supervisor","Right, and i'd like to ask you, if you can create a new ticket for the issue.",[227]),
+  new Speech(227,"supervisor->agent","No problem. First, i create the ticket. It was about a login problem. Secondly, a possible workaround is, to request the database how many missing logins were done in the past.",[228]),
+  new Speech(228,"agent->supervisor","Nice idea, can you do the request?",[229]),
+  new Speech(229,"supervisor->agent","Sure, the user had made 3 attempts to login into his account.",[230]),
+  new Speech(230,"agent->supervisor","Thank you. Please add the information into the ticket.",[231]),
+  new Speech(231,"agent->customer","According to the system, there were three failed login attempts in the past.",[232]),
+  new Speech(232,"customer->agent","Can you provide additional information?",[233]),
+  new Speech(233,"agent->customer","Sorry, but the talk is over. Good bye.",[-1]),
+
+  new Speech(234,"agent->supervisor","There is a new issue which I'd like to forward to you.",[235]),
+  new Speech(235,"supervisor->agent","What do you mean with the term forward?",[236]),
+  new Speech(236,"agent->supervisor","The server of a customer is offline, can you fix it?",[237]),
+  new Speech(237,"supervisor->agent","Sure, I can do so, but the question is if i have time for the task right now.",[238]),
+  new Speech(238,"agent->supervisor","If you're not interested in bring the server online again, it's ok. I will speak to the customer and explain it to him.",[239]),
+  new Speech(239,"supervisor->agent","Please do so.",[240]),
+  new Speech(240,"agent->customer","Sorry, but the server problem has to wait. I'm bussy.",[241]),
+  new Speech(241,"customer->bad","My assumption was, that the helpdesk will help me ...",[242]),
+  new Speech(242,"agent->customer","In this special case, the problem is too complicated. Bye.",[-1]),
+
 ];
 
 function getfollownode() {
@@ -331,6 +357,8 @@ function getcost(id) {
   <p>
   <input type="button" name="submit" value="next" onclick="nextbutton();" />
   <input type="button" name="submit" value="reset" onclick="resetbutton();" />
+
+  
 </form>  
 
 </body>
