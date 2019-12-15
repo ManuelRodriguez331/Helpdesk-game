@@ -5,13 +5,16 @@
   <title>Helpdesk game</title>
 <script type="text/javascript">
 /*
-Helpdesk game, version 1.15 
+Helpdesk game
+version 1.16
 
 */
+
 // global variables  
-var pos=0
-var cost=0
-var poslog=[]
+var version=1.16
+var posbegin=0 // 48 for python problems
+var cost
+var poslog
 
 var Speech = function(id,direction,text,nextid) {
   this.id = id;
@@ -22,7 +25,7 @@ var Speech = function(id,direction,text,nextid) {
 var speech = [
   new Speech(0,"customer->agent","Init",[1,29,48,66,130]),
   new Speech(1,"customer->agent","My monitor isn't working anymore.",[2,6,7,25]),
-  new Speech(2,"agent->customer","Please hold.",[3,102,193,202]),
+  new Speech(2,"agent->customer","Please hold.",[3,102,193,202,255]),
   new Speech(3,"agent->supervisor","The monitor of a client is broken.",[4,62]),
   new Speech(4,"supervisor->agent","Should i open a new ticket?",[5,57]),
   new Speech(5,"agent->supervisor","No, because the customer has argued, that he can fix it by himself.",[20]),
@@ -52,10 +55,10 @@ var speech = [
   new Speech(25,"agent->supervisor","Can you create a new ticket, please?",[26]),   
   new Speech(26,"supervisor->agent","Nope, because that's your job.",[27]), 
   new Speech(27,"agent->supervisor","you're right, sorry for asking you.",[28]), 
-  new Speech(28,"agent->customer","I have created a new ticket.",[-1]),                  
+  new Speech(28,"agent->customer","I've created a new ticket.",[-1]),                  
 
   new Speech(29,"customer->agent","I can't login into my account",[30,37,43,219]),
-  new Speech(30,"agent->customer","Please hold.",[31,111,162]),
+  new Speech(30,"agent->customer","Please hold.",[31,111,162,316]),
   new Speech(31,"agent->supervisor","Are you familiar with login problems?",[32]),
   new Speech(32,"supervisor->agent","Sorry, but I'm in an important meeting.",[33]),
   new Speech(33,"agent->supervisor","You mean, you can't create a simple ticket for the issue?",[34]),
@@ -76,7 +79,7 @@ var speech = [
   new Speech(46,"customer->agent","I'm trying to login with a desktop PC.",[47]),
   new Speech(47,"agent->customer","Please install the latest update of the operating system.",[-1]),
 
-  new Speech(48,"customer->agent","In my Python script there is an error.",[49,152,183]),
+  new Speech(48,"customer->agent","In my Python script there is an error.",[49,152,183,292]),
   new Speech(49,"agent->customer","Please hold.",[50,173,213]),
   new Speech(50,"agent->supervisor","Can you open a ticket about a Python script problem?",[51]),
   new Speech(51,"supervisor->agent","First, ask the customer for the details.",[52]),
@@ -97,8 +100,8 @@ var speech = [
   new Speech(64,"supervisor->agent","No it's not. The customer has no idea in which position the jumper is.",[65]),
   new Speech(65,"agent->customer","Perhaps the DIP switch is in the wrong position, bye.",[-1]),
 
-  new Speech(66,"customer->agent","The server is offline, help.",[67,83,123]),
-  new Speech(67,"agent->customer","Please hold.",[68,75,93,234]),
+  new Speech(66,"customer->agent","The server is offline, help.",[67,83,123,243]),
+  new Speech(67,"agent->customer","Please hold.",[68,75,93,234,287]),
   new Speech(68,"agent->supervisor","Hi, what is going on?",[69]),
   new Speech(69,"supervisor->agent","Nothing special, I'm trying to search for something.",[70]),
   new Speech(70,"agent->supervisor","The server of a customer is down.",[71]),
@@ -169,7 +172,7 @@ var speech = [
   new Speech(128,"agent->supervisor","Sorry, for asking you.",[129]),
   new Speech(129,"agent->customer","The server problem has to wait. Have a nice day.",[-1]),
 
-  new Speech(130,"customer->agent","Hello again, i've called the helpdesk an hour ago, because my monitor isn't working.",[131,141]),
+  new Speech(130,"customer->agent","Hello again, i've called the helpdesk an hour ago, because my monitor isn't working.",[131,141,275]),
   new Speech(131,"agent->customer","And the problem wasn't fixed?",[132]),
   new Speech(132,"customer->agent","Right, and now I'd like to talk to your supervisor please.",[133]),
   new Speech(133,"agent->customer","please hold",[134]),
@@ -193,7 +196,7 @@ var speech = [
   new Speech(150,"costumer->agent","Oh, the monitor has repaired by himself. Thank you very much.",[151]),
   new Speech(151,"agent->costumer","Bye.",[-1]),
 
-  new Speech(152,"agent->customer","Is it a game written in Python3?",[153]),
+  new Speech(152,"agent->customer","Is it a game written in Python 3?",[153]),
   new Speech(153,"customer->agent","No, I'm programming a network application.",[154]),
   new Speech(154,"agent->customer","Please hold.",[155]),
   new Speech(155,"agent->supervisor","There is a customer on the other line with a Python problem in a network application. Any advice?",[156]),
@@ -208,11 +211,11 @@ var speech = [
   new Speech(163,"supervisor->agent","Ask the user if he knows the password.",[164]),
   new Speech(164,"agent->customer","Do you know the password?",[165]),
   new Speech(165,"customer->agent","Yes i do.",[166]),
-  new Speech(166,"agent->supervisor","He knows his password. What next?",[167]),
+  new Speech(166,"agent->supervisor","He knows his password. What's next?",[167]),
   new Speech(167,"supervisor->agent","Ask him which error message is shown on the screen.",[168]),
-  new Speech(168,"agent->customer","Is there a failure message shown on the screen?",[169]),
-  new Speech(169,"customer->agent","Yes, it is written, that the login has failed-",[170]),
-  new Speech(179,"agent->customer","Ok, i will create a new ticket with the problem.",[171]),
+  new Speech(168,"agent->customer","Is there a message shown on the screen?",[169]),
+  new Speech(169,"customer->agent","Yes, it is written, that the login has failed.",[170]),
+  new Speech(179,"agent->customer","Ok, i will create a new ticket for the problem.",[171]),
   new Speech(171,"customer->agent","And what should i do next?",[172]),
   new Speech(172,"agent->customer","Nothing, the problem is written down in the database. Bye.",[-1]),
 
@@ -275,9 +278,9 @@ var speech = [
   new Speech(224,"agent->supervisor","There is a customer, who can't login into his account.",[225]),
   new Speech(225,"supervisor->agent","And you need to know how to fix it?",[226]),
   new Speech(226,"agent->supervisor","Right, and i'd like to ask you, if you can create a new ticket for the issue.",[227]),
-  new Speech(227,"supervisor->agent","No problem. First, i create the ticket. It was about a login problem. Secondly, a possible workaround is, to request the database how many missing logins were done in the past.",[228]),
+  new Speech(227,"supervisor->agent","No problem. First, i create the ticket. It was about a login problem. Secondly, a possible workaround is, to request the database how many failed logins were done in the past.",[228]),
   new Speech(228,"agent->supervisor","Nice idea, can you do the request?",[229]),
-  new Speech(229,"supervisor->agent","Sure, the user had made 3 attempts to login into his account.",[230]),
+  new Speech(229,"supervisor->agent","Sure, the user has made 3 attempts to login into his account.",[230]),
   new Speech(230,"agent->supervisor","Thank you. Please add the information into the ticket.",[231]),
   new Speech(231,"agent->customer","According to the system, there were three failed login attempts in the past.",[232]),
   new Speech(232,"customer->agent","Can you provide additional information?",[233]),
@@ -286,25 +289,115 @@ var speech = [
   new Speech(234,"agent->supervisor","There is a new issue which I'd like to forward to you.",[235]),
   new Speech(235,"supervisor->agent","What do you mean with the term forward?",[236]),
   new Speech(236,"agent->supervisor","The server of a customer is offline, can you fix it?",[237]),
-  new Speech(237,"supervisor->agent","Sure, I can do so, but the question is if i have time for the task right now.",[238]),
+  new Speech(237,"supervisor->agent","Sure, I can do so, but the question is, if i have time for the task right now.",[238]),
   new Speech(238,"agent->supervisor","If you're not interested in bring the server online again, it's ok. I will speak to the customer and explain it to him.",[239]),
   new Speech(239,"supervisor->agent","Please do so.",[240]),
   new Speech(240,"agent->customer","Sorry, but the server problem has to wait. I'm bussy.",[241]),
   new Speech(241,"customer->bad","My assumption was, that the helpdesk will help me ...",[242]),
   new Speech(242,"agent->customer","In this special case, the problem is too complicated. Bye.",[-1]),
 
+  new Speech(243,"agent->customer","Sounds like an interesting problem.",[244]),
+  new Speech(244,"customer->agent","Yes, and it's urgent.",[245]),
+  new Speech(245,"agent->customer","Please hold.",[246]),
+  new Speech(246,"agent->supervisor","Create a new ticket about a server, which is down.",[247]),
+  new Speech(247,"supervisor->agent","Acknowledged. Everything else?",[248]),
+  new Speech(248,"agent->supervisor","I need a workaround, quickly.",[249]),
+  new Speech(249,"supervisor->agent","Ok, i only need one minute. Please hold.",[250]),
+  new Speech(250,"agent->supervisor","Are you done?",[251]),
+  new Speech(251,"supervisor->agent","The first step is to execute the ping tool. Then a traceroute is needed. And if this doesn't help, a manuel terminal login with SSH is recommended.",[252]),
+  new Speech(252,"agent->supervisor","Sounds great. Please add the information into the ticket.",[253]),
+  new Speech(253,"agent->customer","A new ticket was created with the issue, You have received the e-mail right now.",[254]),
+  new Speech(254,"customer->agent","I'd like to rate the helpdesk. It gets the grade poor, because it took too long. Bye.",[-1]),
+
+  new Speech(255,"agent->supervisor","Hello",[256]),
+  new Speech(256,"supervisor->agent","How can i help you?",[257]),
+  new Speech(257,"agent->supervisor","There are lots of troubles with a broken monitor of a customer.",[258]),
+  new Speech(258,"supervisor->agent","Have you created a ticket already?",[259]),
+  new Speech(259,"agent->supervisor","Sorry, I'm not familiar with the issue tracker. Can you create one instead?",[260]),
+  new Speech(260,"supervisor->agent","Yes, but only this time. The next problem has to be handled without my help.",[261]),
+  new Speech(261,"agent->supervisor","Let us talk about the monitor. What is the procedure to fix it?",[262]),
+  new Speech(262,"supervisor->agent","In most cases, a broken capacitor is the reason. It has to be replaced.",[263]),
+  new Speech(263,"agent->supervisor","Sorry, but the answer is wrong. A more likely reason is a power cable which isn't connected.",[264]),
+  new Speech(264,"supervisor->agent","You're right. I will note down both hints into the ticket.",[265]),
+  new Speech(265,"agent->supervisor","Thanks a lot.",[266]),
+  new Speech(266,"supervisor->agent","Should i talk to the customer?",[267]),
+  new Speech(267,"agent->supervisor","No, i can handle it alone. Thanks again.",[268]),
+  new Speech(268,"agent->customer","I've created a new ticket with some troubleshooting advices. Please read it carefully and follow the instructions. Bye.",[269]),
+  new Speech(269,"customer->agent","One moment please. Can I rate the service?",[270]),
+  new Speech(270,"agent->customer","Sure. On a scale from poor until super-helpfull, what is your judgement?",[271]),
+  new Speech(271,"customer->agent","I give you a very poor, because the advice in the ticket doesn't make much sense. Bye.",[272]),
+  new Speech(272,"agent->supervisor","Your work was rated by the customer. Do you like to know, how helpful it was?",[273]),
+  new Speech(273,"supervisor->agent","It was rated as very poor, right?",[274]),
+  new Speech(274,"agent->supervisor","We have to improve our effort to satisfy the next customer better.",[-1]),
+
+  new Speech(275,"agent->customer","Please hold.",[276]),
+  new Speech(276,"agent->supervisor","The monitor of a customer isn't working.",[277]),
+  new Speech(277,"supervisor->agent","The problem sounds familiar.",[278]),
+  new Speech(278,"agent->supervisor","Great if you know the procedure. Please create a new ticket and provide a workaround.",[279]),
+  new Speech(279,"supervisor->agent","The ticket was created with the explanation, that the graphics card has a failure.",[280]),
+  new Speech(280,"agent->supervisor","Please slow down a bit. The graphics card is working fine.",[281]),
+  new Speech(281,"supervisor->agent","You think, it's the monitor itself?",[282]),
+  new Speech(282,"agent->supervisor","For sure, because the propability of a broken display is higher than a malfucntion PCI-Express card.",[283]),
+  new Speech(283,"supervisor->agent","Thanks for the advice, i will note it down into the ticket.",[284]),
+  new Speech(284,"agent->customer","The problem is located in the monitor itself but not in the graphics card.",[285]),
+  new Speech(285,"customer->agent","Can you send me the ticket as e-mail with further information?",[286]),
+  new Speech(286,"agent->customer","I will do so. Bye.",[-1]),
+
+  new Speech(287,"agent->supervisor","A server isn't working anymore.",[288]),
+  new Speech(288,"supervisor->agent","I will try to connect with the SSH tool. Additionally, I've created a ticket.",[289]),
+  new Speech(289,"agent->customer","A technician is trying to fix the problem. Do you like to attend the customer poll?",[290]),
+  new Speech(290,"customer->agent","Why not? On a scale from 1 to 10, you get the grade very poor.",[291]),
+  new Speech(291,"agent->customer","Thank you very much. Bye.",[-1]),
+
+  new Speech(292,"agent->customer","Is it a Flask issue?",[293]),
+  new Speech(293,"customer->agent","Right, I'm programming a web-application and something with the socket isn't working.",[294,304]),
+  new Speech(294,"agent->customer","Please hold.",[295]),
+  new Speech(295,"agent->supervisor","A python flask issue was reported from a user.",[296]),
+  new Speech(296,"supervisor->agent","This is easy to solve. It's for sure a threading problem with the Global Interpreter lock.",[297]),
+  new Speech(297,"agent->supervisor","Sorry, but the answer is wrong. Please search in the internet for the most common Flask problems and write the result into the ticket.",[298]),
+  new Speech(298,"supervisor->agent","Correct, there are many other options available. According to the tutorial it's possible to print out the error message to the console.",[299]),
+  new Speech(299,"agent->supervisor","Thanks for the help.",[300]),
+  new Speech(300,"agent->customer","Is it maybe the Global interpreter lock?",[301]),
+  new Speech(301,"customer->agent","It was my hypothesis as well.",[302]),
+  new Speech(302,"agent->customer","Any other open questions?",[303]),
+  new Speech(303,"customer->agent","No, but thanks for the help. Bye.",[-1]),
+
+  new Speech(304,"agent->customer","Which kind of application do you program exactly?",[305]),
+  new Speech(305,"customer->agent","It's a hello world demo with a chat window.",[306]),
+  new Speech(306,"agent->customer","And two Python apps are started on different computers at the same time?",[307]),
+  new Speech(307,"customer->agent","Yeah, but the server window has thrown an exception.",[308]),
+  new Speech(308,"supervisor->agent","Do you need help?",[309]),
+  new Speech(309,"agent->supervisor","No thanks, everything runs fine.",[310]),
+  new Speech(310,"agent->customer","It's maybe the socketio port adress which is configured wrong.",[311]),
+  new Speech(311,"customer->agent","No, with the port everything is ok. What else can be the reason?",[312]),
+  new Speech(312,"agent->customer","Are you using a Windows computer?",[313]),
+  new Speech(313,"customer->agent","Sure, can you hurry a bit?",[314]),
+  new Speech(314,"agent->customer","Sorry, but the problem description wasn't detailed enough. I will close the ticket. Do you like to attend the customer poll?",[315]),
+  new Speech(315,"customer->agent","Sure, on a scale from 1 to 10. You get the rank 9 which is very good. I was satisfied with the service. Bye.",[-1]),
+
+  new Speech(316,"agent->supervisor","The user can't login into his account.",[317]),
+  new Speech(317,"supervisor->agent","It's for sure, that he has forgotten the password.",[318]),
+  new Speech(318,"agent->supervisor","No it's not. He has done everything right, but with the authentication something is wrong.",[319]),
+  new Speech(319,"supervisor->agent","I wouldn't assume the worst case. Maybe it was only a wrong typed character during the login procedure.",[320]),
+  new Speech(320,"agent->supervisor","I understand, you're trying to tell a story about users, who are wrong but with the software everything runs great?",[321]),
+  new Speech(321,"supervisor->agent","Perhaps i should create a fresh ticket and write down all the information.",[322]),
+  new Speech(322,"agent->supervisor","Great idea, please do so.",[323]),
+  new Speech(323,"agent->customer","Do you like to grade the service so far?",[324]),
+  new Speech(324,"customer->agent","Which service, my problem remains unsolved?",[325]),
+  new Speech(325,"agent->customer","Something with the login software is wrong. Please try again in one hour.",[326]),
+  new Speech(326,"customer->","That sounds logical. I will give the service quality an average rating. Bye.",[-1]),
+
 ];
 
 function getfollownode() {
-  var goalcost="low" // "middle", "high"
   var temp=speech[pos].nextid
   randid=temp[Math.floor(Math.random() * temp.length)]; // get random element  
   return randid
 }
 
 function nextbutton() {
-  var message=""
   // create message
+  var message=""
   if (pos==-1) {
     message+="END"
   }
@@ -314,20 +407,21 @@ function nextbutton() {
     poslog.push(pos)
     pos=getfollownode()
   }
+  // write message and scroll to end of textarea
   document.getElementById('msgbox').value+= message+"\n"
-  
-  // scroll to end of textarea
   var textarea = document.getElementById('msgbox');
   textarea.scrollTop = textarea.scrollHeight;
   
   // update labelinfo
+  document.getElementById('labelversion').innerHTML = "version "+version
+  document.getElementById('labelposbegin').innerHTML = "posbegin "+posbegin
   document.getElementById('labelnodes').innerHTML = "nodes in database "+speech.length
   document.getElementById('labelcost').innerHTML = "cost "+cost
   document.getElementById('labelhistory').innerHTML = "history "+poslog
 }
 
 function resetbutton() {
-  pos=0
+  pos=posbegin
   cost=0
   poslog=[]
   document.getElementById('msgbox').value = ""
@@ -349,6 +443,8 @@ function getcost(id) {
 <h2>Helpdesk game</h2>
 
 <form name="form1">
+  <label id="labelversion">info</label><br>
+  <label id="labelposbegin">info</label><br>
   <label id="labelnodes">info</label><br>
   <label id="labelcost">info</label><br>
   <label id="labelhistory">info</label><br>
@@ -357,7 +453,7 @@ function getcost(id) {
   <p>
   <input type="button" name="submit" value="next" onclick="nextbutton();" />
   <input type="button" name="submit" value="reset" onclick="resetbutton();" />
-
+  
   
 </form>  
 
@@ -365,6 +461,6 @@ function getcost(id) {
 </html>
 
 <script language="javascript" type="text/javascript">
-  nextbutton()
+  resetbutton()
   
 </script>
