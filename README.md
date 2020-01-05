@@ -10,6 +10,11 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ![screenshot](screenshot.png)
 
 ### Changelog
+version 1.17
+
+- linebreak for dialogue turn
+- minor dialogue improvements
+
 version 1.16
 
 - increased nodes in database to 327
