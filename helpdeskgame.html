@@ -6,12 +6,11 @@
 <script type="text/javascript">
 /*
 Helpdesk game
-version 1.16
-
+   
 */
 
 // global variables  
-var version=1.16
+var version=1.17
 var posbegin=0 // 48 for python problems
 var cost
 var poslog
@@ -272,7 +271,7 @@ var speech = [
 
   new Speech(219,"agent->customer","Sorry, i have no idea what to do.",[220]),
   new Speech(220,"customer->agent","It's a very good answer. Can I talk to your supervisor please?",[221]),
-  new Speech(221,"agent->customer","This is a joke, isn't it?",[222]),
+  new Speech(221,"agent->customer","That's a joke, isn't it?",[222]),
   new Speech(222,"customer->agent","My problem is urgent, I'd like to speak to your supervisor.",[223]),
   new Speech(223,"customer->agent","Please hold.",[224]),
   new Speech(224,"agent->supervisor","There is a customer, who can't login into his account.",[225]),
@@ -304,7 +303,7 @@ var speech = [
   new Speech(248,"agent->supervisor","I need a workaround, quickly.",[249]),
   new Speech(249,"supervisor->agent","Ok, i only need one minute. Please hold.",[250]),
   new Speech(250,"agent->supervisor","Are you done?",[251]),
-  new Speech(251,"supervisor->agent","The first step is to execute the ping tool. Then a traceroute is needed. And if this doesn't help, a manuel terminal login with SSH is recommended.",[252]),
+  new Speech(251,"supervisor->agent","The first step is to execute the ping tool. Then a traceroute is needed. And if this doesn't help, a terminal login with SSH is recommended.",[252]),
   new Speech(252,"agent->supervisor","Sounds great. Please add the information into the ticket.",[253]),
   new Speech(253,"agent->customer","A new ticket was created with the issue, You have received the e-mail right now.",[254]),
   new Speech(254,"customer->agent","I'd like to rate the helpdesk. It gets the grade poor, because it took too long. Bye.",[-1]),
@@ -333,7 +332,7 @@ var speech = [
   new Speech(275,"agent->customer","Please hold.",[276]),
   new Speech(276,"agent->supervisor","The monitor of a customer isn't working.",[277]),
   new Speech(277,"supervisor->agent","The problem sounds familiar.",[278]),
-  new Speech(278,"agent->supervisor","Great if you know the procedure. Please create a new ticket and provide a workaround.",[279]),
+  new Speech(278,"agent->supervisor","Great, if you know the procedure. Please create a ticket and provide a workaround.",[279]),
   new Speech(279,"supervisor->agent","The ticket was created with the explanation, that the graphics card has a failure.",[280]),
   new Speech(280,"agent->supervisor","Please slow down a bit. The graphics card is working fine.",[281]),
   new Speech(281,"supervisor->agent","You think, it's the monitor itself?",[282]),
@@ -344,7 +343,7 @@ var speech = [
   new Speech(286,"agent->customer","I will do so. Bye.",[-1]),
 
   new Speech(287,"agent->supervisor","A server isn't working anymore.",[288]),
-  new Speech(288,"supervisor->agent","I will try to connect with the SSH tool. Additionally, I've created a ticket.",[289]),
+  new Speech(288,"supervisor->agent","I will try to connect with the SSH tool. Additionally, I've created a ticket.",[289,327]),
   new Speech(289,"agent->customer","A technician is trying to fix the problem. Do you like to attend the customer poll?",[290]),
   new Speech(290,"customer->agent","Why not? On a scale from 1 to 10, you get the grade very poor.",[291]),
   new Speech(291,"agent->customer","Thank you very much. Bye.",[-1]),
@@ -387,6 +386,11 @@ var speech = [
   new Speech(325,"agent->customer","Something with the login software is wrong. Please try again in one hour.",[326]),
   new Speech(326,"customer->","That sounds logical. I will give the service quality an average rating. Bye.",[-1]),
 
+  new Speech(327,"agent->supervisor","If the server is down, a simple SSH connection won't help.",[328]),
+  new Speech(328,"supervisor->agent","You should explain the problem much better.",[329]),
+  new Speech(329,"agent->supervisor","The virtual machine of the customer is broken. The problem is located in the hypervisor.",[330]),
+  new Speech(330,"supervisor->agent","No problem, i can fix it too.",[289]), // jump back to previous node
+
 ];
 
 function getfollownode() {
@@ -394,6 +398,23 @@ function getfollownode() {
   randid=temp[Math.floor(Math.random() * temp.length)]; // get random element  
   return randid
 }
+
+function newperson() {
+  var result // true=dialogue turn
+  if(poslog.length>0) {
+    lastid=poslog[poslog.length-1]
+    current=speech[pos].direction
+    previous=speech[lastid].direction
+    if(previous.includes("customer") && current.includes("customer")) {
+      result=false
+    }
+    else if(previous.includes("supervisor") && current.includes("supervisor")) {
+      result=false
+    }
+    else { result=true }
+  }
+  return result
+}  
 
 function nextbutton() {
   // create message
@@ -403,6 +424,7 @@ function nextbutton() {
   }
   else {
     cost+=getcost(pos)
+    if(newperson()) { message+="\n" }
     message+= speech[pos].direction+": "+speech[pos].text
     poslog.push(pos)
     pos=getfollownode()
@@ -440,21 +462,18 @@ function getcost(id) {
 </head>
 
 <body>
-<h2>Helpdesk game</h2>
-
+<h3>Helpdesk game</h3>
 <form name="form1">
-  <label id="labelversion">info</label><br>
-  <label id="labelposbegin">info</label><br>
-  <label id="labelnodes">info</label><br>
-  <label id="labelcost">info</label><br>
-  <label id="labelhistory">info</label><br>
+  <label id="labelversion"></label><br>
+  <label id="labelnodes"></label><br>
+  <label id="labelposbegin"></label><br>
+  <label id="labelcost"></label><br>
+  <label id="labelhistory"></label><br>
   <p>
-  <textarea id="msgbox" cols="70" rows="10"></textarea>
+  <textarea id="msgbox" cols="70" rows="12"></textarea>
   <p>
   <input type="button" name="submit" value="next" onclick="nextbutton();" />
   <input type="button" name="submit" value="reset" onclick="resetbutton();" />
-  
-  
 </form>  
 
 </body>
@@ -462,5 +481,4 @@ function getcost(id) {
 
 <script language="javascript" type="text/javascript">
   resetbutton()
-  
 </script>
