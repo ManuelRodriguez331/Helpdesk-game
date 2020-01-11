@@ -10,6 +10,10 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ![screenshot](screenshot.png)
 
 ### Changelog
+version 1.2
+- Wikiproject AI dialogue
+- number of nodes is 431
+
 version 1.17
 
 - linebreak for dialogue turn
