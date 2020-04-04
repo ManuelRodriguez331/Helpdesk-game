@@ -10,12 +10,12 @@ Helpdesk game
 info:
 - increasing all numbers in a textfile by 1,
   https://stackoverflow.com/questions/23893952/increment-all-numbers-in-a-file   
- 
+
 */
 
 // global variables  
-var version=1.2
-var posbegin=0 // 1 for wikiproject AI
+var version=1.4
+var posbegin=0 // 0=default (all nodes), 1=computer problems, 332=wikiproject AI
 var cost
 var poslog
 var pos
@@ -403,7 +403,7 @@ var speech = [
   // ----------------------
   // Wikiproject AI
   // ----------------------
-  new Speech(332,"customer->agent","Wikiproject AI",[333,342,349,361,367,378,389,397,409,416,423]),
+  new Speech(332,"customer->agent","Wikiproject AI",[333,342,349,361,367,378,389,397,409,416,423,431,441,451]),
   
   new Speech(333,"customer->agent","Is there the Helpdesk for the Wikiproject AI?",[334]),
   new Speech(334,"agent->customer","Sure, how can i help you?",[335]),
@@ -515,6 +515,38 @@ var speech = [
   new Speech(429,"agent->customer","Select a topic of choice first. Then try to identify open tasks in the Wikiproject AI which fits close to the topic and contribute with the acquired knowledge. This can be done on-the-fly while browsing in the internet with a search engine.",[430]),
   new Speech(430,"customer->agent","That's sound complicated, i rate the answer with 1 out of 10 points which is poor. Bye",[-1]),
 
+  new Speech(431,"customer->agent","Three of my edits were deleted by an admin. What's next?",[432]),
+  new Speech(432,"agent->customer","Can you describe the edits you have made in detail?",[433]),
+  new Speech(433,"customer->agent","Their size was smaller than 1000 bytes and they are fitting great to the article, and the comment was a bit longer to explain why the edit was necessary.",[434]),
+  new Speech(434,"agent->customer","please hold",[435]),
+  new Speech(435,"agent->supervisor","A user with some reverted edits has made contact with the admin.",[436]),
+  new Speech(436,"supervisor->agent","I have no idea what the motivation of an individual is, to delete content.",[437]),
+  new Speech(437,"agent->supervisor","Do you mean, a single person decides what a group of users is allowed to contribute?",[438]),
+  new Speech(438,"supervisor->agent","The idea is to see each case separate and avoid to discuss about rejecting edits in general.",[439]),
+  new Speech(439,"agent->customer","It's a problem of group interaction. An admin is allowed to undo a commit, if he speasks for a larger audience.",[440]),
+  new Speech(440,"customer->agent","Thanks for the great answer, bye.",[-1]),
+
+  new Speech(441,"customer->agent","Has the project a newsletter?",[442]),
+  new Speech(442,"agent->customer","You mean, similar to the Wikiproject videogames newsletter with interviews and tricks how to improve the articles?",[443]),
+  new Speech(443,"customer->agent","Yes in that direction, i'd like to a read a modern fanzine.",[444]),
+  new Speech(444,"agent->customer","Please hold.",[445]),
+  new Speech(445,"agent->supervisor","Is the next issue of the newsletter ready?",[446]),
+  new Speech(446,"supervisor->agent","Sorry, but i have no time for this.",[447]),
+  new Speech(447,"agent->supervisor","Create a ticket, a user likes to read a newsletter.",[448]),
+  new Speech(448,"supervisor->agent","Done, the ticket was created, but somebody has to write the newsletter.",[449]),
+  new Speech(449,"agent->customer","There is no newsletter available.",[450]),
+  new Speech(450,"customer->agent","That's too bad, but thank you.",[-1]),
+
+  new Speech(451,"customer->agent","My draft article was rejected by the admin.",[452]),
+  new Speech(452,"agent->customer","Please hold",[453]),
+  new Speech(453,"agent->supervisor","I know you're busy but a customer has problems to move a draft article into the main space.",[454]),
+  new Speech(454,"supervisor->agent","The quality was low.",[455]),
+  new Speech(455,"agent->supervisor","Wrong answer. Think again and search in the internet if you don't know the answer yet.",[456]),
+  new Speech(456,"supervisor->agent","Sorry, for my first answer. I have created a ticket for the case and found an answer which makes more sense.",[457]),
+  new Speech(457,"agent->supervisor","Nice job. Go on.",[458]),
+  new Speech(458,"supervisor->agent","The draft quality is measured by objective values like numbers of edits, number of editors, number of references and the subject is also important.",[459]),
+  new Speech(459,"agent->customer","The admin is judging with a score which is equal for all submissions. To move a draft successful into the main space, the edit count has to be increased, the number of references has to be higher and if the article was edited by more than a single user the admin will like this very much. Good luck.",[460]),
+  new Speech(460,"customer->agent","Thanks, but the answer didn't satisfied me. I rate the service with 0.2 out of 1 which is poor. Bye.",[-1]),
 /*
   new Speech(389,"customer->agent","",[379]),
   new Speech(387,"agent->customer","",[388]),
