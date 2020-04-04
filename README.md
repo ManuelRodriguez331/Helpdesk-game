@@ -12,6 +12,7 @@ Right now, the dialogue tree consists of four customer problems: broken monitor,
 ### Changelog
 version 1.4
 - increase the speech corpus
+
 version 1.2
 - Wikiproject AI dialogue
 - number of nodes is 431
